@@ -5,16 +5,15 @@
   "description": "Shopify Order Tracking App",
   "main": "index.js",
   "scripts": {
-    "build": "./node_modules/.bin/remix build",
-    "dev": "./node_modules/.bin/remix dev",
-    "start": "./node_modules/.bin/remix-serve build",
+    "build": "remix build",
+    "dev": "remix dev",
+    "start": "node ./build/index.js",
     "typecheck": "tsc"
   },
   "dependencies": {
     "@remix-run/node": "^2.16.6",
     "@remix-run/react": "^2.16.6",
     "@remix-run/serve": "^2.16.6",
-    "@remix-run/vercel": "^1.19.3",
     "@shopify/app-bridge": "^3.7.9",
     "@shopify/app-bridge-react": "^3.7.9",
     "@shopify/polaris": "^12.10.0",
