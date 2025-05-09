@@ -5,7 +5,6 @@
   "framework": "remix",
   "regions": ["iad1"],
   "env": {
-    "SHOPIFY_API_KEY": "6f4478780993fea4587008ba5265ad6c",
-    "SHOPIFY_API_SECRET": "51432d4361c586b4bd14020ee5562e2a"
+    "NODE_ENV": "production"
   }
 }

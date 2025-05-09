@@ -1568,7 +1568,7 @@ var require_Icon = __commonJS({
       accessibilityLabel
     }) {
       let sourceType;
-      typeof source == "function" ? sourceType = "function" : source === "placeholder" ? sourceType = "placeholder" : sourceType = "external";
+      typeof source == "function" ? sourceType = "function" : source === "placeholder" ? sourceType = "placeholder" : sourceType = "external", tone && sourceType === "external" && console.warn("Recoloring external SVGs is not supported. Set the intended color on your SVG instead.");
       let className = css.classNames(Icon_module.default.Icon, tone && Icon_module.default[css.variationName("tone", tone)]), SourceComponent = source, contentMarkup = {
         function: /* @__PURE__ */ React2.createElement(SourceComponent, {
           className: Icon_module.default.Svg,
@@ -4458,7 +4458,7 @@ var require_components = __commonJS({
     function wrapWithComponent(element, Component, props) {
       return element == null ? null : isElementOfType(element, Component) ? element : /* @__PURE__ */ React2.createElement(Component, props, element);
     }
-    var isComponent = (AComponent, AnotherComponent) => AComponent === AnotherComponent;
+    var isComponent = hotReloadComponentCheck;
     function isElementOfType(element, Component) {
       if (element == null || !/* @__PURE__ */ React2.isValidElement(element) || typeof element.type == "string")
         return !1;
@@ -4482,6 +4482,10 @@ var require_components = __commonJS({
       children
     }) {
       return condition ? children : null;
+    }
+    function hotReloadComponentCheck(AComponent, AnotherComponent) {
+      let componentName = AComponent.name, anotherComponentName = AnotherComponent.displayName;
+      return AComponent === AnotherComponent || Boolean(componentName) && componentName === anotherComponentName;
     }
     exports.ConditionalRender = ConditionalRender;
     exports.ConditionalWrapper = ConditionalWrapper;
@@ -4735,9 +4739,9 @@ var require_PopoverOverlay = __commonJS({
             return;
           let focusableChild = focus.findFirstKeyboardFocusableNode(this.contentNode.current);
           focusableChild && autofocusTarget === "first-node" ? focusableChild.focus({
-            preventScroll: !1
+            preventScroll: !0
           }) : this.contentNode.current.focus({
-            preventScroll: !1
+            preventScroll: !0
           });
         });
       }
@@ -8123,7 +8127,9 @@ var require_Slidable = __commonJS({
         let {
           draggerNode
         } = this;
-        draggerNode != null && onDraggerHeight(draggerNode.clientWidth);
+        draggerNode != null && (onDraggerHeight(draggerNode.clientWidth), setTimeout(() => {
+          onDraggerHeight(draggerNode.clientWidth);
+        }, 0));
       }
       render() {
         let {
@@ -8183,9 +8189,13 @@ var require_AlphaPicker = __commonJS({
           sliderHeight: 0,
           draggerHeight: 0
         }, this.setSliderHeight = (node) => {
-          node != null && this.setState({
+          node != null && (this.setState({
             sliderHeight: node.clientHeight
-          });
+          }), setTimeout(() => {
+            this.setState({
+              sliderHeight: node.clientHeight
+            });
+          }, 0));
         }, this.setDraggerHeight = (height) => {
           this.setState({
             draggerHeight: height
@@ -8273,9 +8283,13 @@ var require_HuePicker = __commonJS({
           sliderHeight: 0,
           draggerHeight: 0
         }, this.setSliderHeight = (node) => {
-          node != null && this.setState({
+          node != null && (this.setState({
             sliderHeight: node.clientHeight
-          });
+          }), setTimeout(() => {
+            this.setState({
+              sliderHeight: node.clientHeight
+            });
+          }, 0));
         }, this.setDraggerHeight = (height) => {
           this.setState({
             draggerHeight: height
@@ -8397,12 +8411,19 @@ var require_ColorPicker = __commonJS({
         let {
           colorNode
         } = this;
-        colorNode != null && this.setState({
+        colorNode != null && (this.setState({
           pickerSize: {
             width: colorNode.clientWidth,
             height: colorNode.clientHeight
           }
-        });
+        }), setTimeout(() => {
+          this.setState({
+            pickerSize: {
+              width: colorNode.clientWidth,
+              height: colorNode.clientHeight
+            }
+          });
+        }, 0));
       }
       render() {
         let {
@@ -9409,7 +9430,9 @@ var require_DataTable = __commonJS({
         };
       }
       componentDidMount() {
-        this.handleResize();
+        setTimeout(() => {
+          this.handleResize();
+        }, 10);
       }
       componentDidUpdate(prevProps) {
         isEqual(prevProps, this.props) || this.handleResize();
@@ -9435,7 +9458,9 @@ var require_DataTable = __commonJS({
           columnVisibilityData,
           isScrolledFarthestLeft,
           isScrolledFarthestRight
-        } = this.state, fixedFirstColumns = this.fixedFirstColumns(), rowCountIsEven = rows.length % 2 === 0, className = css.classNames(DataTable_module.default.DataTable, condensed && DataTable_module.default.condensed, totals && DataTable_module.default.ShowTotals, showTotalsInFooter && DataTable_module.default.ShowTotalsInFooter, hasZebraStripingOnData && DataTable_module.default.ZebraStripingOnData, hasZebraStripingOnData && rowCountIsEven && DataTable_module.default.RowCountIsEven), wrapperClassName = css.classNames(DataTable_module.default.TableWrapper, condensed && DataTable_module.default.condensed, increasedTableDensity && DataTable_module.default.IncreasedTableDensity, stickyHeader && DataTable_module.default.StickyHeaderEnabled), headingMarkup = /* @__PURE__ */ React2.createElement("tr", null, headings.map((heading, index) => this.renderHeading({
+        } = this.state;
+        fixedFirstColumn && console.warn("Deprecation: The `hasFixedFirstColumn` prop on the `DataTable` has been deprecated. Use fixedFirstColumns={n} instead.");
+        let fixedFirstColumns = this.fixedFirstColumns(), rowCountIsEven = rows.length % 2 === 0, className = css.classNames(DataTable_module.default.DataTable, condensed && DataTable_module.default.condensed, totals && DataTable_module.default.ShowTotals, showTotalsInFooter && DataTable_module.default.ShowTotalsInFooter, hasZebraStripingOnData && DataTable_module.default.ZebraStripingOnData, hasZebraStripingOnData && rowCountIsEven && DataTable_module.default.RowCountIsEven), wrapperClassName = css.classNames(DataTable_module.default.TableWrapper, condensed && DataTable_module.default.condensed, increasedTableDensity && DataTable_module.default.IncreasedTableDensity, stickyHeader && DataTable_module.default.StickyHeaderEnabled), headingMarkup = /* @__PURE__ */ React2.createElement("tr", null, headings.map((heading, index) => this.renderHeading({
           heading,
           headingIndex: index,
           inFixedNthColumn: !1,
@@ -13534,6 +13559,7 @@ var require_TabMeasurer = __commonJS({
       React2.useEffect(() => {
         handleMeasurement();
       }, [handleMeasurement, tabs]), useComponentDidMount.useComponentDidMount(() => {
+        setTimeout(handleMeasurement, 0);
       });
       let tabsMarkup = tabs.map((tab, index) => /* @__PURE__ */ React2.createElement(Tab.Tab, {
         measuring: !0,
@@ -16016,6 +16042,7 @@ var require_Sheet = __commonJS({
         activatorElement && requestAnimationFrame(() => focus.focusFirstFocusableNode(activatorElement));
       }, [activator, onClose]);
       React2.useEffect(() => {
+        console.warn("Deprecation: <Sheet /> is deprecated. This component might be removed in a future major version of Polaris. Use <Modal /> instead or avoid modal patterns all together.");
       }, []);
       let activatorMarkup = activator && !isRef(activator) ? /* @__PURE__ */ React2.createElement("div", {
         ref: activatorRef
@@ -16565,6 +16592,7 @@ var require_TabMeasurer2 = __commonJS({
       React2.useEffect(() => {
         handleMeasurement();
       }, [handleMeasurement, tabs]), useComponentDidMount.useComponentDidMount(() => {
+        setTimeout(handleMeasurement, 0);
       });
       let tabsMarkup = tabs.map((tab, index) => /* @__PURE__ */ React2.createElement(Tab.Tab, {
         measuring: !0,
@@ -17361,8 +17389,9 @@ var require_Item10 = __commonJS({
           onClick: getClickHandler(onClick)
         }, iconMarkup, itemLabelMarkup, wrappedBadgeMarkup))));
       }
+      secondaryAction && console.warn("Deprecation: The `secondaryAction` prop on the `Navigation.Item` has been deprecated. Use `secondaryActions` instead.");
       let actions = secondaryActions || secondaryAction && [secondaryAction];
-      actions && actions.length > MAX_SECONDARY_ACTIONS && (actions.length = MAX_SECONDARY_ACTIONS);
+      actions && actions.length > MAX_SECONDARY_ACTIONS && (actions.length = MAX_SECONDARY_ACTIONS, console.warn(`secondaryActions must have a maximum of ${MAX_SECONDARY_ACTIONS} actions. Only the first ${MAX_SECONDARY_ACTIONS} actions will be rendered.`));
       let secondaryActionMarkup = actions?.length ? /* @__PURE__ */ React2.createElement("span", {
         className: Navigation_module.default.SecondaryActions
       }, actions.map((action) => /* @__PURE__ */ React2.createElement(ItemSecondaryAction, Object.assign({
@@ -18429,7 +18458,7 @@ var require_ProgressBar = __commonJS({
     }
     function parseProgress(progress, warningMessage) {
       let progressWidth;
-      return progress < 0 ? progressWidth = 0 : progress > 100 ? progressWidth = 100 : progressWidth = progress, progressWidth;
+      return progress < 0 ? (console.warn(warningMessage), progressWidth = 0) : progress > 100 ? (console.warn(warningMessage), progressWidth = 100) : progressWidth = progress, progressWidth;
     }
     exports.ProgressBar = ProgressBar;
   }
@@ -19639,8 +19668,8 @@ var require_ResourceList = __commonJS({
         forceUpdate();
       }, [forceUpdate, items]);
       let renderItemWithId = (item, index) => {
-        let id = idForItem(item, index);
-        return renderItem(item, id, index);
+        let id = idForItem(item, index), itemContent = renderItem(item, id, index);
+        return components.isElementOfType(itemContent, ResourceItem.ResourceItem) || console.warn("<ResourceList /> renderItem function should return a <ResourceItem />."), itemContent;
       }, handleMultiSelectionChange = (lastSelected2, currentSelected, resolveItemId2) => {
         let min = Math.min(lastSelected2, currentSelected), max = Math.max(lastSelected2, currentSelected);
         return items.slice(min, max + 1).map(resolveItemId2);
@@ -19786,7 +19815,10 @@ var require_SettingToggle = __commonJS({
       action,
       children
     }) {
-      let id = React2.useId(), actionMarkup = action ? utils.buttonFrom(action, {
+      let id = React2.useId();
+      console.warn(`Deprecation: <SettingToggle /> is deprecated. This component will be removed in a future major version of Polaris. Use the primitive layout and typography components to compose a setting toggle card.
+      See the "With primitive components" example in https://polaris.shopify.com/components/deprecated/setting-toggle`);
+      let actionMarkup = action ? utils.buttonFrom(action, {
         role: "switch",
         ariaChecked: enabled ? "true" : "false",
         size: "slim"
@@ -20788,7 +20820,7 @@ var require_VideoThumbnail = __commonJS({
       }, timeStampMarkup), progressMarkup);
     }
     function calculateProgress(videoLength, videoProgress) {
-      if (videoProgress > videoLength, videoProgress > 0 && videoLength > 0) {
+      if (videoProgress > videoLength && console.warn("Value passed to the video progress should not exceed video length. Resetting progress to 100%."), videoProgress > 0 && videoLength > 0) {
         let progress = parseFloat((videoProgress / videoLength).toFixed(2));
         return progress > 1 ? 1 : progress;
       }
@@ -21031,7 +21063,7 @@ var entry_server_node_exports = {};
 __export(entry_server_node_exports, {
   default: () => handleRequest
 });
-var import_node_stream = require("node:stream"), import_node = require("@remix-run/node"), import_react = require("@remix-run/react"), import_isbot = __toESM(require("isbot")), import_server = require("react-dom/server"), import_jsx_runtime = require("react/jsx-runtime"), ABORT_DELAY = 5e3;
+var import_node_stream = require("node:stream"), import_node = require("@remix-run/node"), import_react = require("@remix-run/react"), import_isbot = __toESM(require("isbot")), import_server = require("react-dom/server"), import_jsx_dev_runtime = require("react/jsx-dev-runtime"), ABORT_DELAY = 5e3;
 function handleRequest(request, responseStatusCode, responseHeaders, remixContext, loadContext) {
   return (0, import_isbot.default)(request.headers.get("user-agent")) ? handleBotRequest(
     request,
@@ -21048,13 +21080,21 @@ function handleRequest(request, responseStatusCode, responseHeaders, remixContex
 function handleBotRequest(request, responseStatusCode, responseHeaders, remixContext) {
   return new Promise((resolve, reject) => {
     let shellRendered = !1, { pipe, abort } = (0, import_server.renderToPipeableStream)(
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+      /* @__PURE__ */ (0, import_jsx_dev_runtime.jsxDEV)(
         import_react.RemixServer,
         {
           context: remixContext,
           url: request.url,
           abortDelay: ABORT_DELAY
-        }
+        },
+        void 0,
+        !1,
+        {
+          fileName: "node_modules/@remix-run/dev/dist/config/defaults/entry.server.node.tsx",
+          lineNumber: 42,
+          columnNumber: 7
+        },
+        this
       ),
       {
         onAllReady() {
@@ -21081,13 +21121,21 @@ function handleBotRequest(request, responseStatusCode, responseHeaders, remixCon
 function handleBrowserRequest(request, responseStatusCode, responseHeaders, remixContext) {
   return new Promise((resolve, reject) => {
     let shellRendered = !1, { pipe, abort } = (0, import_server.renderToPipeableStream)(
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+      /* @__PURE__ */ (0, import_jsx_dev_runtime.jsxDEV)(
         import_react.RemixServer,
         {
           context: remixContext,
           url: request.url,
           abortDelay: ABORT_DELAY
-        }
+        },
+        void 0,
+        !1,
+        {
+          fileName: "node_modules/@remix-run/dev/dist/config/defaults/entry.server.node.tsx",
+          lineNumber: 92,
+          columnNumber: 7
+        },
+        this
       ),
       {
         onShellReady() {
@@ -21118,22 +21166,70 @@ __export(root_exports, {
   default: () => App,
   loader: () => loader
 });
-var import_node2 = require("@remix-run/node"), import_react2 = require("@remix-run/react"), import_react3 = require("@shopify/shopify-app-remix/react"), import_server2 = require("@shopify/shopify-app-remix/server"), import_polaris = __toESM(require_cjs()), import_jsx_runtime2 = require("react/jsx-runtime"), loader = async ({ request }) => (await import_server2.authenticate.admin(request), (0, import_node2.json)({ apiKey: process.env.SHOPIFY_API_KEY || "" }));
+var import_node2 = require("@remix-run/node"), import_react2 = require("@remix-run/react"), import_react3 = require("@shopify/shopify-app-remix/react"), import_server2 = require("@shopify/shopify-app-remix/server"), import_polaris = __toESM(require_cjs()), import_jsx_dev_runtime2 = require("react/jsx-dev-runtime"), loader = async ({ request }) => (await import_server2.authenticate.admin(request), (0, import_node2.json)({ apiKey: process.env.SHOPIFY_API_KEY || "" }));
 function App() {
   let { apiKey } = (0, import_react2.useLoaderData)();
-  return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("html", { children: [
-    /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("head", { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("meta", { charSet: "utf-8" }),
-      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("meta", { name: "viewport", content: "width=device-width,initial-scale=1" }),
-      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(import_react2.Meta, {}),
-      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(import_react2.Links, {})
-    ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("body", { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(import_react3.AppProvider, { isEmbeddedApp: !0, apiKey, children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(import_polaris.Frame, { children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(import_react2.Outlet, {}) }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(import_react2.ScrollRestoration, {}),
-      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(import_react2.Scripts, {})
-    ] })
-  ] });
+  return /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)("html", { children: [
+    /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)("head", { children: [
+      /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)("meta", { charSet: "utf-8" }, void 0, !1, {
+        fileName: "app/root.tsx",
+        lineNumber: 25,
+        columnNumber: 9
+      }, this),
+      /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)("meta", { name: "viewport", content: "width=device-width,initial-scale=1" }, void 0, !1, {
+        fileName: "app/root.tsx",
+        lineNumber: 26,
+        columnNumber: 9
+      }, this),
+      /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)(import_react2.Meta, {}, void 0, !1, {
+        fileName: "app/root.tsx",
+        lineNumber: 27,
+        columnNumber: 9
+      }, this),
+      /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)(import_react2.Links, {}, void 0, !1, {
+        fileName: "app/root.tsx",
+        lineNumber: 28,
+        columnNumber: 9
+      }, this)
+    ] }, void 0, !0, {
+      fileName: "app/root.tsx",
+      lineNumber: 24,
+      columnNumber: 7
+    }, this),
+    /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)("body", { children: [
+      /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)(import_react3.AppProvider, { isEmbeddedApp: !0, apiKey, children: /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)(import_polaris.Frame, { children: /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)(import_react2.Outlet, {}, void 0, !1, {
+        fileName: "app/root.tsx",
+        lineNumber: 33,
+        columnNumber: 13
+      }, this) }, void 0, !1, {
+        fileName: "app/root.tsx",
+        lineNumber: 32,
+        columnNumber: 11
+      }, this) }, void 0, !1, {
+        fileName: "app/root.tsx",
+        lineNumber: 31,
+        columnNumber: 9
+      }, this),
+      /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)(import_react2.ScrollRestoration, {}, void 0, !1, {
+        fileName: "app/root.tsx",
+        lineNumber: 36,
+        columnNumber: 9
+      }, this),
+      /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)(import_react2.Scripts, {}, void 0, !1, {
+        fileName: "app/root.tsx",
+        lineNumber: 37,
+        columnNumber: 9
+      }, this)
+    ] }, void 0, !0, {
+      fileName: "app/root.tsx",
+      lineNumber: 30,
+      columnNumber: 7
+    }, this)
+  ] }, void 0, !0, {
+    fileName: "app/root.tsx",
+    lineNumber: 23,
+    columnNumber: 5
+  }, this);
 }
 
 // app/routes/_index.tsx
@@ -21145,7 +21241,7 @@ __export(index_exports, {
 var import_node3 = require("@remix-run/node");
 
 // app/components/OrderTracker.tsx
-var import_react4 = require("react"), import_polaris2 = __toESM(require_cjs()), import_jsx_runtime3 = require("react/jsx-runtime");
+var import_react4 = require("react"), import_polaris2 = __toESM(require_cjs()), import_jsx_dev_runtime3 = require("react/jsx-dev-runtime");
 function OrderTracker() {
   let [orderNumber, setOrderNumber] = (0, import_react4.useState)(""), [email, setEmail] = (0, import_react4.useState)(""), [loading, setLoading] = (0, import_react4.useState)(!1), [error, setError] = (0, import_react4.useState)(""), [orderStatus, setOrderStatus] = (0, import_react4.useState)(null), handleSubmit = async () => {
     setLoading(!0), setError("");
@@ -21166,10 +21262,14 @@ function OrderTracker() {
       setLoading(!1);
     }
   };
-  return /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_polaris2.Page, { children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_polaris2.Layout, { children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_polaris2.Layout.Section, { children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_polaris2.Card, { children: /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(import_polaris2.BlockStack, { gap: "4", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_polaris2.Text, { variant: "headingLg", as: "h2", children: "Track Your Order" }),
-    /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(import_polaris2.FormLayout, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+  return /* @__PURE__ */ (0, import_jsx_dev_runtime3.jsxDEV)(import_polaris2.Page, { children: /* @__PURE__ */ (0, import_jsx_dev_runtime3.jsxDEV)(import_polaris2.Layout, { children: /* @__PURE__ */ (0, import_jsx_dev_runtime3.jsxDEV)(import_polaris2.Layout.Section, { children: /* @__PURE__ */ (0, import_jsx_dev_runtime3.jsxDEV)(import_polaris2.Card, { children: /* @__PURE__ */ (0, import_jsx_dev_runtime3.jsxDEV)(import_polaris2.BlockStack, { gap: "4", children: [
+    /* @__PURE__ */ (0, import_jsx_dev_runtime3.jsxDEV)(import_polaris2.Text, { variant: "headingLg", as: "h2", children: "Track Your Order" }, void 0, !1, {
+      fileName: "app/components/OrderTracker.tsx",
+      lineNumber: 59,
+      columnNumber: 15
+    }, this),
+    /* @__PURE__ */ (0, import_jsx_dev_runtime3.jsxDEV)(import_polaris2.FormLayout, { children: [
+      /* @__PURE__ */ (0, import_jsx_dev_runtime3.jsxDEV)(
         import_polaris2.TextField,
         {
           label: "Order Number",
@@ -21177,9 +21277,17 @@ function OrderTracker() {
           onChange: setOrderNumber,
           autoComplete: "off",
           required: !0
-        }
+        },
+        void 0,
+        !1,
+        {
+          fileName: "app/components/OrderTracker.tsx",
+          lineNumber: 62,
+          columnNumber: 17
+        },
+        this
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+      /* @__PURE__ */ (0, import_jsx_dev_runtime3.jsxDEV)(
         import_polaris2.TextField,
         {
           label: "Email",
@@ -21188,29 +21296,113 @@ function OrderTracker() {
           onChange: setEmail,
           autoComplete: "email",
           required: !0
-        }
+        },
+        void 0,
+        !1,
+        {
+          fileName: "app/components/OrderTracker.tsx",
+          lineNumber: 70,
+          columnNumber: 17
+        },
+        this
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_polaris2.Button, { primary: !0, onClick: handleSubmit, loading, children: "Track Order" })
-    ] }),
-    error && /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_polaris2.Banner, { status: "critical", children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { children: error }) }),
-    orderStatus && /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(import_polaris2.BlockStack, { gap: "4", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_polaris2.Text, { variant: "headingMd", children: "Order Status" }),
-      orderStatus.fulfillment_status === "FULFILLED" ? /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(import_polaris2.BlockStack, { gap: "2", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_polaris2.Banner, { status: "success", children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { children: "Your order has been shipped!" }) }),
-        orderStatus.tracking_number && /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(import_polaris2.Text, { children: [
+      /* @__PURE__ */ (0, import_jsx_dev_runtime3.jsxDEV)(import_polaris2.Button, { primary: !0, onClick: handleSubmit, loading, children: "Track Order" }, void 0, !1, {
+        fileName: "app/components/OrderTracker.tsx",
+        lineNumber: 79,
+        columnNumber: 17
+      }, this)
+    ] }, void 0, !0, {
+      fileName: "app/components/OrderTracker.tsx",
+      lineNumber: 61,
+      columnNumber: 15
+    }, this),
+    error && /* @__PURE__ */ (0, import_jsx_dev_runtime3.jsxDEV)(import_polaris2.Banner, { status: "critical", children: /* @__PURE__ */ (0, import_jsx_dev_runtime3.jsxDEV)("p", { children: error }, void 0, !1, {
+      fileName: "app/components/OrderTracker.tsx",
+      lineNumber: 86,
+      columnNumber: 19
+    }, this) }, void 0, !1, {
+      fileName: "app/components/OrderTracker.tsx",
+      lineNumber: 85,
+      columnNumber: 17
+    }, this),
+    orderStatus && /* @__PURE__ */ (0, import_jsx_dev_runtime3.jsxDEV)(import_polaris2.BlockStack, { gap: "4", children: [
+      /* @__PURE__ */ (0, import_jsx_dev_runtime3.jsxDEV)(import_polaris2.Text, { variant: "headingMd", children: "Order Status" }, void 0, !1, {
+        fileName: "app/components/OrderTracker.tsx",
+        lineNumber: 92,
+        columnNumber: 19
+      }, this),
+      orderStatus.fulfillment_status === "FULFILLED" ? /* @__PURE__ */ (0, import_jsx_dev_runtime3.jsxDEV)(import_polaris2.BlockStack, { gap: "2", children: [
+        /* @__PURE__ */ (0, import_jsx_dev_runtime3.jsxDEV)(import_polaris2.Banner, { status: "success", children: /* @__PURE__ */ (0, import_jsx_dev_runtime3.jsxDEV)("p", { children: "Your order has been shipped!" }, void 0, !1, {
+          fileName: "app/components/OrderTracker.tsx",
+          lineNumber: 96,
+          columnNumber: 25
+        }, this) }, void 0, !1, {
+          fileName: "app/components/OrderTracker.tsx",
+          lineNumber: 95,
+          columnNumber: 23
+        }, this),
+        orderStatus.tracking_number && /* @__PURE__ */ (0, import_jsx_dev_runtime3.jsxDEV)(import_polaris2.Text, { children: [
           "Tracking Number: ",
           orderStatus.tracking_number
-        ] }),
-        orderStatus.tracking_url && /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_polaris2.Link, { url: orderStatus.tracking_url, external: !0, children: "Track Package" })
-      ] }) : /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_polaris2.Banner, { children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { children: "Your order is being processed and hasn't been shipped yet." }) })
-    ] })
-  ] }) }) }) }) });
+        ] }, void 0, !0, {
+          fileName: "app/components/OrderTracker.tsx",
+          lineNumber: 99,
+          columnNumber: 25
+        }, this),
+        orderStatus.tracking_url && /* @__PURE__ */ (0, import_jsx_dev_runtime3.jsxDEV)(import_polaris2.Link, { url: orderStatus.tracking_url, external: !0, children: "Track Package" }, void 0, !1, {
+          fileName: "app/components/OrderTracker.tsx",
+          lineNumber: 102,
+          columnNumber: 25
+        }, this)
+      ] }, void 0, !0, {
+        fileName: "app/components/OrderTracker.tsx",
+        lineNumber: 94,
+        columnNumber: 21
+      }, this) : /* @__PURE__ */ (0, import_jsx_dev_runtime3.jsxDEV)(import_polaris2.Banner, { children: /* @__PURE__ */ (0, import_jsx_dev_runtime3.jsxDEV)("p", { children: "Your order is being processed and hasn't been shipped yet." }, void 0, !1, {
+        fileName: "app/components/OrderTracker.tsx",
+        lineNumber: 109,
+        columnNumber: 23
+      }, this) }, void 0, !1, {
+        fileName: "app/components/OrderTracker.tsx",
+        lineNumber: 108,
+        columnNumber: 21
+      }, this)
+    ] }, void 0, !0, {
+      fileName: "app/components/OrderTracker.tsx",
+      lineNumber: 91,
+      columnNumber: 17
+    }, this)
+  ] }, void 0, !0, {
+    fileName: "app/components/OrderTracker.tsx",
+    lineNumber: 58,
+    columnNumber: 13
+  }, this) }, void 0, !1, {
+    fileName: "app/components/OrderTracker.tsx",
+    lineNumber: 57,
+    columnNumber: 11
+  }, this) }, void 0, !1, {
+    fileName: "app/components/OrderTracker.tsx",
+    lineNumber: 56,
+    columnNumber: 9
+  }, this) }, void 0, !1, {
+    fileName: "app/components/OrderTracker.tsx",
+    lineNumber: 55,
+    columnNumber: 7
+  }, this) }, void 0, !1, {
+    fileName: "app/components/OrderTracker.tsx",
+    lineNumber: 54,
+    columnNumber: 5
+  }, this);
 }
 
 // app/routes/_index.tsx
-var import_jsx_runtime4 = require("react/jsx-runtime"), loader2 = async ({ request }) => (0, import_node3.json)({});
+var import_jsx_dev_runtime4 = require("react/jsx-dev-runtime"), loader2 = async ({ request }) => (0, import_node3.json)({});
 function Index() {
-  return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(OrderTracker, {});
+  return /* @__PURE__ */ (0, import_jsx_dev_runtime4.jsxDEV)(OrderTracker, {}, void 0, !1, {
+    fileName: "app/routes/_index.tsx",
+    lineNumber: 10,
+    columnNumber: 10
+  }, this);
 }
 
 // app/routes/app.tsx
@@ -21219,29 +21411,77 @@ __export(app_exports, {
   default: () => App2,
   loader: () => loader3
 });
-var import_node4 = require("@remix-run/node"), import_react5 = require("@remix-run/react"), import_react6 = require("@shopify/shopify-app-remix/react"), import_server3 = require("@shopify/shopify-app-remix/server"), import_polaris3 = __toESM(require_cjs()), import_jsx_runtime5 = require("react/jsx-runtime"), loader3 = async ({ request }) => (await import_server3.authenticate.admin(request), (0, import_node4.json)({ apiKey: process.env.SHOPIFY_API_KEY || "" }));
+var import_node4 = require("@remix-run/node"), import_react5 = require("@remix-run/react"), import_react6 = require("@shopify/shopify-app-remix/react"), import_server3 = require("@shopify/shopify-app-remix/server"), import_polaris3 = __toESM(require_cjs()), import_jsx_dev_runtime5 = require("react/jsx-dev-runtime"), loader3 = async ({ request }) => (await import_server3.authenticate.admin(request), (0, import_node4.json)({ apiKey: process.env.SHOPIFY_API_KEY || "" }));
 function App2() {
   let { apiKey } = (0, import_react5.useLoaderData)();
-  return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("html", { children: [
-    /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("head", { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("meta", { charSet: "utf-8" }),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("meta", { name: "viewport", content: "width=device-width,initial-scale=1" }),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(import_react5.Meta, {}),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(import_react5.Links, {})
-    ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("body", { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(import_react6.AppProvider, { isEmbeddedApp: !0, apiKey, children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(import_polaris3.Frame, { children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(import_react5.Outlet, {}) }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(import_react5.ScrollRestoration, {}),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(import_react5.Scripts, {})
-    ] })
-  ] });
+  return /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)("html", { children: [
+    /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)("head", { children: [
+      /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)("meta", { charSet: "utf-8" }, void 0, !1, {
+        fileName: "app/routes/app.tsx",
+        lineNumber: 25,
+        columnNumber: 9
+      }, this),
+      /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)("meta", { name: "viewport", content: "width=device-width,initial-scale=1" }, void 0, !1, {
+        fileName: "app/routes/app.tsx",
+        lineNumber: 26,
+        columnNumber: 9
+      }, this),
+      /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)(import_react5.Meta, {}, void 0, !1, {
+        fileName: "app/routes/app.tsx",
+        lineNumber: 27,
+        columnNumber: 9
+      }, this),
+      /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)(import_react5.Links, {}, void 0, !1, {
+        fileName: "app/routes/app.tsx",
+        lineNumber: 28,
+        columnNumber: 9
+      }, this)
+    ] }, void 0, !0, {
+      fileName: "app/routes/app.tsx",
+      lineNumber: 24,
+      columnNumber: 7
+    }, this),
+    /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)("body", { children: [
+      /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)(import_react6.AppProvider, { isEmbeddedApp: !0, apiKey, children: /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)(import_polaris3.Frame, { children: /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)(import_react5.Outlet, {}, void 0, !1, {
+        fileName: "app/routes/app.tsx",
+        lineNumber: 33,
+        columnNumber: 13
+      }, this) }, void 0, !1, {
+        fileName: "app/routes/app.tsx",
+        lineNumber: 32,
+        columnNumber: 11
+      }, this) }, void 0, !1, {
+        fileName: "app/routes/app.tsx",
+        lineNumber: 31,
+        columnNumber: 9
+      }, this),
+      /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)(import_react5.ScrollRestoration, {}, void 0, !1, {
+        fileName: "app/routes/app.tsx",
+        lineNumber: 36,
+        columnNumber: 9
+      }, this),
+      /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)(import_react5.Scripts, {}, void 0, !1, {
+        fileName: "app/routes/app.tsx",
+        lineNumber: 37,
+        columnNumber: 9
+      }, this)
+    ] }, void 0, !0, {
+      fileName: "app/routes/app.tsx",
+      lineNumber: 30,
+      columnNumber: 7
+    }, this)
+  ] }, void 0, !0, {
+    fileName: "app/routes/app.tsx",
+    lineNumber: 23,
+    columnNumber: 5
+  }, this);
 }
 
 // server-assets-manifest:@remix-run/dev/assets-manifest
-var assets_manifest_default = { entry: { module: "/build/entry.client-C6XDNB53.js", imports: ["/build/_shared/chunk-75R42CZL.js", "/build/_shared/chunk-IA5SELQI.js"] }, routes: { root: { id: "root", parentId: void 0, path: "", index: void 0, caseSensitive: void 0, module: "/build/root-QDDBA4NB.js", imports: ["/build/_shared/chunk-27VV7BRP.js", "/build/_shared/chunk-IPTBUBXZ.js"], hasAction: !1, hasLoader: !0, hasClientAction: !1, hasClientLoader: !1, hasErrorBoundary: !1 }, "routes/_index": { id: "routes/_index", parentId: "root", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/_index-JNQIXXZ2.js", imports: void 0, hasAction: !1, hasLoader: !0, hasClientAction: !1, hasClientLoader: !1, hasErrorBoundary: !1 }, "routes/app": { id: "routes/app", parentId: "root", path: "app", index: void 0, caseSensitive: void 0, module: "/build/routes/app-2G4YHRZ5.js", imports: void 0, hasAction: !1, hasLoader: !0, hasClientAction: !1, hasClientLoader: !1, hasErrorBoundary: !1 } }, version: "86d1e732", hmr: void 0, url: "/build/manifest-86D1E732.js" };
+var assets_manifest_default = { entry: { module: "/build/entry.client-37BFBHY3.js", imports: ["/build/_shared/chunk-ZWGWGGVF.js", "/build/_shared/chunk-BJ3XLEYR.js", "/build/_shared/chunk-NCFMFYM6.js", "/build/_shared/chunk-XU7DNSPJ.js", "/build/_shared/chunk-GIAAE3CH.js", "/build/_shared/chunk-BOXFZXVX.js", "/build/_shared/chunk-UWV35TSL.js", "/build/_shared/chunk-PNG5AS42.js"] }, routes: { root: { id: "root", parentId: void 0, path: "", index: void 0, caseSensitive: void 0, module: "/build/root-KYJSS3VI.js", imports: ["/build/_shared/chunk-5LHCZAPM.js", "/build/_shared/chunk-NMZL6IDN.js", "/build/_shared/chunk-XBE5HIWP.js"], hasAction: !1, hasLoader: !0, hasClientAction: !1, hasClientLoader: !1, hasErrorBoundary: !1 }, "routes/_index": { id: "routes/_index", parentId: "root", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/_index-Y7Y6UDCL.js", imports: void 0, hasAction: !1, hasLoader: !0, hasClientAction: !1, hasClientLoader: !1, hasErrorBoundary: !1 }, "routes/app": { id: "routes/app", parentId: "root", path: "app", index: void 0, caseSensitive: void 0, module: "/build/routes/app-AGAN7F6N.js", imports: void 0, hasAction: !1, hasLoader: !0, hasClientAction: !1, hasClientLoader: !1, hasErrorBoundary: !1 } }, version: "52022cf9", hmr: { runtime: "/build/_shared\\chunk-NCFMFYM6.js", timestamp: 1746788696362 }, url: "/build/manifest-52022CF9.js" };
 
 // server-entry-module:@remix-run/dev/server-build
-var mode = "production", assetsBuildDirectory = "public/build", future = { v3_fetcherPersist: !1, v3_relativeSplatPath: !1 }, publicPath = "/build/", entry = { module: entry_server_node_exports }, routes = {
+var mode = "development", assetsBuildDirectory = "public/build", future = { v3_fetcherPersist: !1, v3_relativeSplatPath: !1 }, publicPath = "/build/", entry = { module: entry_server_node_exports }, routes = {
   root: {
     id: "root",
     parentId: void 0,
@@ -21277,3 +21517,4 @@ var mode = "production", assetsBuildDirectory = "public/build", future = { v3_fe
   publicPath,
   routes
 });
+//# sourceMappingURL=index.js.map
