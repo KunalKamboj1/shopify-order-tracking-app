@@ -1,0 +1,22 @@
+name = "Order Tracker"
+client_id = "6f4478780993fea4587008ba5265ad6c"
+client_secret = "51432d4361c586b4bd14020ee5562e2a"
+application_url = "APP_URL"
+embedded = true
+
+[access_scopes]
+# Read access to orders
+scopes = "read_orders"
+
+[auth]
+redirect_urls = [
+  "APP_URL/auth/callback",
+  "APP_URL/auth/shopify/callback",
+  "APP_URL/api/auth/callback"
+]
+
+[webhooks]
+api_version = "2024-01"
+
+[pos]
+embedded = false 

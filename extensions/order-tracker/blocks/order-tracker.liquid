@@ -1,0 +1,29 @@
+{% schema %}
+{
+  "name": "Order Tracker",
+  "target": "section",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Order Tracker"
+    }
+  ],
+  "templates": ["page"]
+}
+{% endschema %}
+
+<div class="order-tracker-app">
+  <div id="shopify-order-tracker"></div>
+</div>
+
+<style>
+  .order-tracker-app {
+    padding: 2rem 0;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+</style>
+
+<script>
+  // The app block will be rendered here by the Shopify App Bridge
+</script> 
