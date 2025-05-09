@@ -5,9 +5,9 @@
   "description": "Shopify Order Tracking App",
   "main": "index.js",
   "scripts": {
-    "build": "npx remix build",
-    "dev": "npx remix dev",
-    "start": "npx remix-serve build",
+    "build": "./node_modules/.bin/remix build",
+    "dev": "./node_modules/.bin/remix dev",
+    "start": "./node_modules/.bin/remix-serve build",
     "typecheck": "tsc"
   },
   "dependencies": {

@@ -2,7 +2,7 @@ services:
   - type: web
     name: shopify-order-tracker
     env: node
-    buildCommand: npm install && npx remix build
+    buildCommand: npm install && ./node_modules/.bin/remix build
     startCommand: npm start
     envVars:
       - key: NODE_ENV
